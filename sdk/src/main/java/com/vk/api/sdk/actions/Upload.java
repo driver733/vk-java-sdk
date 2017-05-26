@@ -2,15 +2,7 @@ package com.vk.api.sdk.actions;
 
 import com.vk.api.sdk.client.AbstractAction;
 import com.vk.api.sdk.client.VkApiClient;
-import com.vk.api.sdk.queries.upload.UploadDocQuery;
-import com.vk.api.sdk.queries.upload.UploadPhotoMarketAlbumQuery;
-import com.vk.api.sdk.queries.upload.UploadPhotoMarketQuery;
-import com.vk.api.sdk.queries.upload.UploadPhotoMessageQuery;
-import com.vk.api.sdk.queries.upload.UploadPhotoOwnerCoverQuery;
-import com.vk.api.sdk.queries.upload.UploadPhotoOwnerQuery;
-import com.vk.api.sdk.queries.upload.UploadPhotoQuery;
-import com.vk.api.sdk.queries.upload.UploadPhotoWallQuery;
-import com.vk.api.sdk.queries.upload.UploadVideoQuery;
+import com.vk.api.sdk.queries.upload.*;
 
 import java.io.File;
 
@@ -26,6 +18,10 @@ public class Upload extends AbstractAction {
      */
     public Upload(VkApiClient client) {
         super(client);
+    }
+
+    public UploadAudioQuery audio(String uploadUrl, File file) {
+        return new UploadAudioQuery(getClient(), uploadUrl, file);
     }
 
     public UploadPhotoQuery photo(String uploadUrl, File file) {
