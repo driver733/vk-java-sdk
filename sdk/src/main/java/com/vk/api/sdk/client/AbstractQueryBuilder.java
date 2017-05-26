@@ -172,7 +172,6 @@ public abstract class AbstractQueryBuilder<T, R> extends ApiRequest<R> {
         return getThis();
     }
 
-
     /**
      * Set parameter
      *
@@ -229,7 +228,6 @@ public abstract class AbstractQueryBuilder<T, R> extends ApiRequest<R> {
     public <U> T unsafeParamAddAttachments(String key, U... value) {
         return unsafeParamAddAttachments(key, asList(value));
     }
-
 
     /**
      * Set parameter

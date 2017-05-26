@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Query for Audio.save method
  */
-public class AudioSaveQuery extends AbstractQueryBuilder<AudioSaveQuery, List<Audio>> {
+public class AudioSaveQuery extends AbstractQueryBuilder<AudioSaveQuery, Audio> {
     /**
      * Creates a AbstractQueryBuilder instance that can be used to build api request with various parameters
      *
@@ -22,7 +22,7 @@ public class AudioSaveQuery extends AbstractQueryBuilder<AudioSaveQuery, List<Au
      * @param audio  value of "audio" parameter.
      */
     public AudioSaveQuery(VkApiClient client, UserActor actor, int server, String audio, String hash) {
-        super(client, "audio.save", Utils.buildParametrizedType(List.class, Audio.class));
+        super(client, "audio.save", Utils.buildParametrizedType(Audio.class));
         accessToken(actor.getAccessToken());
         server(server);
         audio(audio);
