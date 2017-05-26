@@ -21,11 +21,12 @@ public class AudioSaveQuery extends AbstractQueryBuilder<AudioSaveQuery, List<Au
      * @param server value of "server" parameter.
      * @param audio  value of "audio" parameter.
      */
-    public AudioSaveQuery(VkApiClient client, UserActor actor, int server, String audio) {
+    public AudioSaveQuery(VkApiClient client, UserActor actor, int server, String audio, String hash) {
         super(client, "audio.save", Utils.buildParametrizedType(List.class, Audio.class));
         accessToken(actor.getAccessToken());
         server(server);
         audio(audio);
+        hash(hash);
     }
 
     /**

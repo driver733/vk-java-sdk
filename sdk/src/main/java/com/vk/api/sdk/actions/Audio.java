@@ -112,8 +112,8 @@ public class Audio extends AbstractAction {
      * @param audio  audio
      * @return query
      */
-    public AudioSaveQuery save(UserActor actor, int server, String audio) {
-        return new AudioSaveQuery(getClient(), actor, server, audio);
+    public AudioSaveQuery save(UserActor actor, int server, String audio, String hash) {
+        return new AudioSaveQuery(getClient(), actor, server, audio, hash);
     }
 
     /**
