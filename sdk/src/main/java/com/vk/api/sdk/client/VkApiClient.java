@@ -2,41 +2,7 @@ package com.vk.api.sdk.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.vk.api.sdk.actions.Account;
-import com.vk.api.sdk.actions.Ads;
-import com.vk.api.sdk.actions.Apps;
-import com.vk.api.sdk.actions.Auth;
-import com.vk.api.sdk.actions.Board;
-import com.vk.api.sdk.actions.Database;
-import com.vk.api.sdk.actions.Docs;
-import com.vk.api.sdk.actions.Execute;
-import com.vk.api.sdk.actions.Fave;
-import com.vk.api.sdk.actions.Friends;
-import com.vk.api.sdk.actions.Gifts;
-import com.vk.api.sdk.actions.Groups;
-import com.vk.api.sdk.actions.Leads;
-import com.vk.api.sdk.actions.Likes;
-import com.vk.api.sdk.actions.Market;
-import com.vk.api.sdk.actions.Messages;
-import com.vk.api.sdk.actions.Newsfeed;
-import com.vk.api.sdk.actions.Notes;
-import com.vk.api.sdk.actions.Notifications;
-import com.vk.api.sdk.actions.OAuth;
-import com.vk.api.sdk.actions.Orders;
-import com.vk.api.sdk.actions.Pages;
-import com.vk.api.sdk.actions.Photos;
-import com.vk.api.sdk.actions.Places;
-import com.vk.api.sdk.actions.Polls;
-import com.vk.api.sdk.actions.Search;
-import com.vk.api.sdk.actions.Secure;
-import com.vk.api.sdk.actions.Stats;
-import com.vk.api.sdk.actions.Status;
-import com.vk.api.sdk.actions.Storage;
-import com.vk.api.sdk.actions.Upload;
-import com.vk.api.sdk.actions.Users;
-import com.vk.api.sdk.actions.Videos;
-import com.vk.api.sdk.actions.Wall;
-import com.vk.api.sdk.actions.Widgets;
+import com.vk.api.sdk.actions.*;
 import org.apache.commons.lang3.StringUtils;
 
 public class VkApiClient {
@@ -107,6 +73,8 @@ public class VkApiClient {
     public Apps apps() {
         return new Apps(this);
     }
+
+    public Audio audio() { return  new Audio(this); }
 
     public Auth auth() {
         return new Auth(this);

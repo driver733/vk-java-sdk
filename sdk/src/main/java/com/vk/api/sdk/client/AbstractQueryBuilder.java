@@ -172,6 +172,7 @@ public abstract class AbstractQueryBuilder<T, R> extends ApiRequest<R> {
         return getThis();
     }
 
+
     /**
      * Set parameter
      *
@@ -205,6 +206,15 @@ public abstract class AbstractQueryBuilder<T, R> extends ApiRequest<R> {
         return unsafeParam(key, value.stream().map(Objects::toString).collect(Collectors.joining(",")));
     }
 
+    public T unsafeParamAddAttachments(String key, Collection<?> value) {
+        String entry = params.get(key);
+        if (entry != null) {
+            return unsafeParam(key, entry + "," + value.stream().map(Objects::toString).collect(Collectors.joining(",")));
+        }
+        return unsafeParam(key, value.stream().map(Objects::toString).collect(Collectors.joining(",")));
+    }
+
+
     /**
      * Set parameter
      *
@@ -215,6 +225,11 @@ public abstract class AbstractQueryBuilder<T, R> extends ApiRequest<R> {
     public <U> T unsafeParam(String key, U... value) {
         return unsafeParam(key, asList(value));
     }
+
+    public <U> T unsafeParamAddAttachments(String key, U... value) {
+        return unsafeParamAddAttachments(key, asList(value));
+    }
+
 
     /**
      * Set parameter
