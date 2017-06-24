@@ -1,7 +1,13 @@
 package com.vk.api.sdk.httpclient;
 
-import com.vk.api.sdk.client.ClientResponse;
-import com.vk.api.sdk.client.TransportClient;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -19,21 +25,26 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.SocketException;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+import com.vk.api.sdk.client.ClientResponse;
+import com.vk.api.sdk.client.TransportClient;
 
 /**
- * Created by Anton Tsivarev on 11.09.15.
+ * Class or Interface description.
+ * <p>
+ * Additional info
+ *
+ * @author Mikhail Yakushin (driver733@me.com)
+ * @version $Id$
+ * @since 0.1
  */
-public class HttpTransportClient implements TransportClient {
+public class TransportClientExecuteBatchCached implements TransportClient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HttpTransportClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TransportClientHttp.class);
 
     private static final String ENCODING = "UTF-8";
     private static final String CONTENT_TYPE = "application/x-www-form-urlencoded";
@@ -46,17 +57,24 @@ public class HttpTransportClient implements TransportClient {
     private static final int SOCKET_TIMEOUT_MS = FULL_CONNECTION_TIMEOUT_S * 1000;
 
     private static final ConnectionsSupervisor SUPERVISOR = new ConnectionsSupervisor();
-    private static HttpTransportClient instance;
+    private static TransportClientHttp instance;
     private static HttpClient httpClient;
 
-    public HttpTransportClient() {
+    private final QueryResults cachedResults;
+
+    public TransportClientExecuteBatchCached(final QueryResults cachedResults) {
+        this.cachedResults = cachedResults;
+        init();
+    }
+
+    private void init() {
         CookieStore cookieStore = new BasicCookieStore();
         RequestConfig requestConfig = RequestConfig.custom()
-                .setSocketTimeout(SOCKET_TIMEOUT_MS)
-                .setConnectTimeout(CONNECTION_TIMEOUT_MS)
-                .setConnectionRequestTimeout(CONNECTION_TIMEOUT_MS)
-                .setCookieSpec(CookieSpecs.STANDARD)
-                .build();
+            .setSocketTimeout(SOCKET_TIMEOUT_MS)
+            .setConnectTimeout(CONNECTION_TIMEOUT_MS)
+            .setConnectionRequestTimeout(CONNECTION_TIMEOUT_MS)
+            .setCookieSpec(CookieSpecs.STANDARD)
+            .build();
 
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 
@@ -64,16 +82,17 @@ public class HttpTransportClient implements TransportClient {
         connectionManager.setDefaultMaxPerRoute(MAX_SIMULTANEOUS_CONNECTIONS);
 
         httpClient = HttpClients.custom()
-                .setConnectionManager(connectionManager)
-                .setDefaultRequestConfig(requestConfig)
-                .setDefaultCookieStore(cookieStore)
-                .setUserAgent(USER_AGENT)
-                .build();
+            .setConnectionManager(connectionManager)
+            .setDefaultRequestConfig(requestConfig)
+            .setDefaultCookieStore(cookieStore)
+            .setUserAgent(USER_AGENT)
+            .build();
     }
 
-    public static HttpTransportClient getInstance() {
+    @SuppressWarnings("unused")
+    public static TransportClientHttp getInstance() {
         if (instance == null) {
-            instance = new HttpTransportClient();
+            instance = new TransportClientHttp();
         }
 
         return instance;
@@ -106,7 +125,16 @@ public class HttpTransportClient implements TransportClient {
                     String result = IOUtils.toString(content, ENCODING);
                     Map<String, String> headers = getHeaders(response.getAllHeaders());
                     logRequest(request, response, headers, result, resultTime);
-                    return new ClientResponse(response.getStatusLine().getStatusCode(), result, headers);
+
+                    JsonReader jsonReader = new JsonReader(new StringReader(result));
+                    JsonObject json = new JsonParser().parse(jsonReader).getAsJsonObject();
+                    JsonArray array = json.get("response").getAsJsonArray();
+                    for (final JsonElement element : cachedResults.results()) {
+                        array.add(element);
+                    }
+                    json.add("response", array);
+
+                    return new ClientResponse(response.getStatusLine().getStatusCode(), json.toString(), headers);
                 } finally {
                     SUPERVISOR.removeRequest(request);
                 }
@@ -135,17 +163,17 @@ public class HttpTransportClient implements TransportClient {
             }
 
             StringBuilder builder = new StringBuilder("\n")
-                    .append("Request:\n")
-                    .append("\t").append("Method: ").append(request.getMethod()).append("\n")
-                    .append("\t").append("URI: ").append(request.getURI()).append("\n")
-                    .append("\t").append("Payload: ").append(payload).append("\n")
-                    .append("\t").append("Time: ").append(time != null ? time : "-").append("\n");
+                .append("Request:\n")
+                .append("\t").append("Method: ").append(request.getMethod()).append("\n")
+                .append("\t").append("URI: ").append(request.getURI()).append("\n")
+                .append("\t").append("Payload: ").append(payload).append("\n")
+                .append("\t").append("Time: ").append(time != null ? time : "-").append("\n");
 
             if (response != null) {
                 builder.append("Response:\n")
-                        .append("\t").append("Status: ").append(response.getStatusLine().toString()).append("\n")
-                        .append("\t").append("Headers: ").append(headers != null ? headers : "-").append("\n")
-                        .append("\t").append("Body: ").append(body != null ? body : "-").append("\n");
+                    .append("\t").append("Status: ").append(response.getStatusLine().toString()).append("\n")
+                    .append("\t").append("Headers: ").append(headers != null ? headers : "-").append("\n")
+                    .append("\t").append("Body: ").append(body != null ? body : "-").append("\n");
             }
 
             LOG.debug(builder.toString());
@@ -187,8 +215,8 @@ public class HttpTransportClient implements TransportClient {
         HttpPost request = new HttpPost(url);
         FileBody fileBody = new FileBody(file);
         HttpEntity entity = MultipartEntityBuilder
-                .create()
-                .addPart(fileName, fileBody).build();
+            .create()
+            .addPart(fileName, fileBody).build();
 
         request.setEntity(entity);
         return call(request);

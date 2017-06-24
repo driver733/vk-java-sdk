@@ -68,36 +68,38 @@ public class ExecuteBatchQuery extends AbstractQueryBuilder<ExecuteBatchQuery, J
 
         int requestIndex = 0;
         for (AbstractQueryBuilder request : value) {
-            builder.append("API.").append(request.getMethod()).append("(");
-            Map<String, String> params = new HashMap<>(request.build());
+            if (!request.isCached()) {
+                builder.append("API.").append(request.getMethod()).append("(");
+                Map<String, String> params = new HashMap<>(request.build());
 
-            params.remove("access_token");
-            params.remove("v");
+                params.remove("access_token");
+                params.remove("v");
 
-            if (!params.isEmpty()) {
-                builder.append("{");
-                int paramIndex = 0;
-                for (Map.Entry<String, String> param : params.entrySet()) {
-                    builder.append("\"").append(param.getKey()).append("\":").append("\"")
+                if (!params.isEmpty()) {
+                    builder.append("{");
+                    int paramIndex = 0;
+                    for (Map.Entry<String, String> param : params.entrySet()) {
+                        builder.append("\"").append(param.getKey()).append("\":").append("\"")
                             .append(ESCAPE_VKSCRIPT.translate(param.getValue())).append("\"");
 
-                    if (paramIndex < (params.size() - 1)) {
-                        builder.append(",");
+                        if (paramIndex < (params.size() - 1)) {
+                            builder.append(",");
+                        }
+
+                        paramIndex++;
                     }
 
-                    paramIndex++;
+                    builder.append("}");
                 }
 
-                builder.append("}");
+                builder.append(")");
+
+                if (requestIndex < (value.length - 1)) {
+                    builder.append(",");
+                }
+
+                requestIndex++;
             }
-
-            builder.append(")");
-
-            if (requestIndex < (value.length - 1)) {
-                builder.append(",");
-            }
-
-            requestIndex++;
         }
 
         builder.append("];");
