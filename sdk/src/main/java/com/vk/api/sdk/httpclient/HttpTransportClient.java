@@ -177,6 +177,10 @@ public class HttpTransportClient implements TransportClient {
         return call(request);
     }
 
+    @Override
+    public boolean isCached() {
+        return false;
+    }
 
     @Override
     public ClientResponse post(String url, String fileName, File file) throws IOException {
