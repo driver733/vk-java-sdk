@@ -53,7 +53,6 @@ public class TransportClientCached implements TransportClient {
     /**
      * Request with cached response.
      * @param result Cached request`s response.
-     * @checkstyle ParameterNameCheck (50 lines)
      */
     public TransportClientCached(final JsonElement result) {
         this.result = result;
