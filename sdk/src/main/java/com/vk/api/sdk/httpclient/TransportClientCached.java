@@ -36,10 +36,10 @@ public class TransportClientCached implements TransportClient {
         this.result = new JsonParser().parse(
             new JsonReader(
                 new StringReader(
-                    String.format(
-                        "{\"response\" : %s}",
+//                    String.format(
+//                        "{\"response\" : %s}",
                         response
-                    )
+//                    )
                 )
             )
         );
