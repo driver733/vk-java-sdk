@@ -1,38 +1,16 @@
 package com.vk.api.sdk.httpclient;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.vk.api.sdk.client.ClientResponse;
 import com.vk.api.sdk.client.TransportClient;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
-import java.net.SocketException;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.CookieStore;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class or Interface description.
@@ -52,10 +30,19 @@ public class TransportClientCached implements TransportClient {
 
     /**
      * Request with cached response.
-     * @param result Cached request`s response.
+     * @param response Cached request`s response (value of the response json field).
      */
-    public TransportClientCached(final JsonElement result) {
-        this.result = result;
+    public TransportClientCached(final String response) {
+        this.result = new JsonParser().parse(
+            new JsonReader(
+                new StringReader(
+                    String.format(
+                        "{\"response\" : %s}",
+                        response
+                    )
+                )
+            )
+        );
     }
 
     @Override
