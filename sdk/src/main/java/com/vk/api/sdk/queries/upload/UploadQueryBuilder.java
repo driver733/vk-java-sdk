@@ -36,6 +36,10 @@ public abstract class UploadQueryBuilder<T, R> extends ApiRequest<R> {
         return getThis();
     }
 
+    public String fileName() {
+        return this.file.getName();
+    }
+
     protected abstract T getThis();
 
     @Override
