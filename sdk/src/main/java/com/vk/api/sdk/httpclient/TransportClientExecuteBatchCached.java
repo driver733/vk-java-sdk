@@ -112,7 +112,7 @@ public class TransportClientExecuteBatchCached implements TransportClient {
 
     private ClientResponse call(HttpPost request) throws IOException {
         SocketException exception = null;
-        if (request.getParams().toString().isEmpty()) {
+        if (request.getParams().getParameter("v").equals(null)) {
             JsonObject response = new GsonBuilder()
                 .setPrettyPrinting()
                 .create()
