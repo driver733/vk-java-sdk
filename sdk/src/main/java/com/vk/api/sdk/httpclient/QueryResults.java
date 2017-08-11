@@ -45,4 +45,6 @@ public interface QueryResults {
      */
     List<JsonElement> results() throws IOException;
 
+    boolean fullyCached();
+
 }

@@ -113,7 +113,7 @@ public class TransportClientExecuteBatchCached implements TransportClient {
 
     private ClientResponse call(HttpPost request) throws IOException {
         SocketException exception = null;
-        if (request.getMethod().equals("fake")) {
+        if (this.cachedResults.fullyCached()) {
             JsonObject response = new GsonBuilder()
                 .setPrettyPrinting()
                 .create()
