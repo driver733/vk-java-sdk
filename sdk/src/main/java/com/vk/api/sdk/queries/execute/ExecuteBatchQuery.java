@@ -119,17 +119,17 @@ public class ExecuteBatchQuery extends AbstractQueryBuilder<ExecuteBatchQuery, J
         return Arrays.asList("code", "access_token");
     }
 
-    @Override
-    public JsonElement execute() throws ApiException, ClientException {
-        if (this.build().get("code").contains("[]")) {
-            JsonObject response = new GsonBuilder()
-                .setPrettyPrinting()
-                .create()
-                .fromJson("{ \"response\" : [ ] }", JsonObject.class);
-            return response.get("response").getAsJsonArray();
-        } else {
-            return super.execute();
-        }
+//    @Override
+//    public JsonElement execute() throws ApiException, ClientException {
+//        if (this.build().get("code").contains("[]")) {
+//            JsonObject response = new GsonBuilder()
+//                .setPrettyPrinting()
+//                .create()
+//                .fromJson("{ \"response\" : [ ] }", JsonObject.class);
+//            return response.get("response").getAsJsonArray();
+//        } else {
+//            return super.execute();
+//        }
+//    }
 
-    }
 }
