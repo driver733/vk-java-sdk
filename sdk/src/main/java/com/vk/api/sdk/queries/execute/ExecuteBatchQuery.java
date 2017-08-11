@@ -1,17 +1,20 @@
 package com.vk.api.sdk.queries.execute;
 
-import com.google.gson.JsonElement;
-import com.vk.api.sdk.client.AbstractQueryBuilder;
-import com.vk.api.sdk.client.VkApiClient;
-import com.vk.api.sdk.client.actors.GroupActor;
-import com.vk.api.sdk.client.actors.UserActor;
-import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
-import org.apache.commons.lang3.text.translate.LookupTranslator;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
+import org.apache.commons.lang3.text.translate.LookupTranslator;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.vk.api.sdk.client.AbstractQueryBuilder;
+import com.vk.api.sdk.client.VkApiClient;
+import com.vk.api.sdk.client.actors.GroupActor;
+import com.vk.api.sdk.client.actors.UserActor;
+import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ClientException;
 
 /**
  * Query for execute by code
@@ -114,5 +117,19 @@ public class ExecuteBatchQuery extends AbstractQueryBuilder<ExecuteBatchQuery, J
     @Override
     protected List<String> essentialKeys() {
         return Arrays.asList("code", "access_token");
+    }
+
+    @Override
+    public JsonElement execute() throws ApiException, ClientException {
+        if (this.build().get("code").contains("[]")) {
+            JsonObject response = new GsonBuilder()
+                .setPrettyPrinting()
+                .create()
+                .fromJson("{ \"response\" : [ ] }", JsonObject.class);
+            return response.get("response").getAsJsonArray();
+        } else {
+            return super.execute();
+        }
+
     }
 }
