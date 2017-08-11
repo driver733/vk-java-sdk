@@ -35,6 +35,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.vk.api.sdk.client.ClientResponse;
 import com.vk.api.sdk.client.TransportClient;
+import com.vk.api.sdk.queries.execute.ExecuteBatchQuery;
 
 /**
  * Class or Interface description.
@@ -112,13 +113,13 @@ public class TransportClientExecuteBatchCached implements TransportClient {
 
     private ClientResponse call(HttpPost request) throws IOException {
         SocketException exception = null;
-        if (request.getParams().getParameter("v").equals(null)) {
+        if (request.getMethod().equals("fake")) {
             JsonObject response = new GsonBuilder()
                 .setPrettyPrinting()
                 .create()
                 .fromJson("{ \"response\" : [ ] }", JsonObject.class);
-            JsonArray array = response.get("response").getAsJsonArray();
 
+            JsonArray array = response.get("response").getAsJsonArray();
             for (final JsonElement element : cachedResults.results()) {
                 array.add(element);
             }
@@ -126,6 +127,21 @@ public class TransportClientExecuteBatchCached implements TransportClient {
 
             return new ClientResponse(200, response.toString(), new HashMap<>());
         }
+
+//        if (request.getParams().getParameter("v").equals(null)) {
+//            JsonObject response = new GsonBuilder()
+//                .setPrettyPrinting()
+//                .create()
+//                .fromJson("{ \"response\" : [ ] }", JsonObject.class);
+//            JsonArray array = response.get("response").getAsJsonArray();
+//
+//            for (final JsonElement element : cachedResults.results()) {
+//                array.add(element);
+//            }
+//            response.add("response", array);
+//
+//            return new ClientResponse(200, response.toString(), new HashMap<>());
+//        }
 
         for (int i = 0; i < 3; i++) {
             try {
