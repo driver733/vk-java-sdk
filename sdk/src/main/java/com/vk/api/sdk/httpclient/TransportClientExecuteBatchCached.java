@@ -25,6 +25,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -109,6 +112,21 @@ public class TransportClientExecuteBatchCached implements TransportClient {
 
     private ClientResponse call(HttpPost request) throws IOException {
         SocketException exception = null;
+        if (request.getParams().toString().isEmpty()) {
+            JsonObject response = new GsonBuilder()
+                .setPrettyPrinting()
+                .create()
+                .fromJson("{ \"response\" : [ ] }", JsonObject.class);
+            JsonArray array = response.get("response").getAsJsonArray();
+
+            for (final JsonElement element : cachedResults.results()) {
+                array.add(element);
+            }
+            response.add("response", array);
+
+            return new ClientResponse(200, response.toString(), new HashMap<>());
+        }
+
         for (int i = 0; i < 3; i++) {
             try {
                 SUPERVISOR.addRequest(request);
@@ -129,6 +147,7 @@ public class TransportClientExecuteBatchCached implements TransportClient {
                     JsonReader jsonReader = new JsonReader(new StringReader(result));
                     JsonObject json = new JsonParser().parse(jsonReader).getAsJsonObject();
                     JsonArray array = json.get("response").getAsJsonArray();
+
                     for (final JsonElement element : cachedResults.results()) {
                         array.add(element);
                     }
