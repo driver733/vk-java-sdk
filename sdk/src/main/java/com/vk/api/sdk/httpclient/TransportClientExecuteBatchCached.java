@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
@@ -118,9 +120,11 @@ public class TransportClientExecuteBatchCached implements TransportClient {
             final HashMap<String, String> headers = new HashMap<>();
             headers.put("Content-Type", "application/json");
             JsonObject obj = new JsonObject();
+            final List<JsonElement> list = new ArrayList<>();
             for (JsonElement element : cachedResults.results()) {
-                obj.add("response", element.getAsJsonObject().get("response"));
+                list.add(element.getAsJsonObject().get("response"));
             }
+            obj.add("response", gson.toJsonTree(list));
             return new ClientResponse(200, gson.toJson(obj), headers);
         }
 
