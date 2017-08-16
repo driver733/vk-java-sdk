@@ -118,7 +118,9 @@ public class TransportClientExecuteBatchCached implements TransportClient {
             final HashMap<String, String> headers = new HashMap<>();
             headers.put("Content-Type", "application/json");
             JsonObject obj = new JsonObject();
-            obj.add("response", gson.toJsonTree(cachedResults.results()));
+            for (JsonElement element : cachedResults.results()) {
+                obj.add("response", element);
+            }
             return new ClientResponse(200, gson.toJson(obj), headers);
         }
 
