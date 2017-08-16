@@ -115,9 +115,9 @@ public class TransportClientExecuteBatchCached implements TransportClient {
         SocketException exception = null;
         if (this.cachedResults.fullyCached()) {
             Gson gson = new Gson();
-            JsonObject obj = new JsonObject();
-            obj.add("response", gson.toJsonTree(cachedResults.results()));
-            return new ClientResponse(200, gson.toJson(obj), new HashMap<>());
+//            JsonObject obj = new JsonObject();
+//            obj.add("response", gson.toJsonTree(cachedResults.results()));
+            return new ClientResponse(200, gson.toJson(cachedResults.results()), new HashMap<>());
         }
 
 //        if (request.getParams().getParameter("v").equals(null)) {
