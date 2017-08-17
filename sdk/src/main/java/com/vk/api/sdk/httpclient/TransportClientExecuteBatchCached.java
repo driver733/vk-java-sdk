@@ -122,26 +122,19 @@ public class TransportClientExecuteBatchCached implements TransportClient {
             JsonObject obj = new JsonObject();
             final List<JsonElement> list = new ArrayList<>();
             for (JsonElement element : cachedResults.results()) {
-                list.add(element.getAsJsonObject().get("response"));
+                if (element.isJsonObject()) {
+                    if (element.getAsJsonObject().has("response")) {
+                        list.add(element.getAsJsonObject().get("response"));
+                    } else {
+                        list.add(element.getAsJsonObject()); // extra?
+                    }
+                } else {
+                    list.add(element);
+                }
             }
             obj.add("response", gson.toJsonTree(list));
             return new ClientResponse(200, gson.toJson(obj), headers);
         }
-
-//        if (request.getParams().getParameter("v").equals(null)) {
-//            JsonObject response = new GsonBuilder()
-//                .setPrettyPrinting()
-//                .create()
-//                .fromJson("{ \"response\" : [ ] }", JsonObject.class);
-//            JsonArray array = response.get("response").getAsJsonArray();
-//
-//            for (final JsonElement element : cachedResults.results()) {
-//                array.add(element);
-//            }
-//            response.add("response", array);
-//
-//            return new ClientResponse(200, response.toString(), new HashMap<>());
-//        }
 
         for (int i = 0; i < 3; i++) {
             try {
