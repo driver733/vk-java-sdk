@@ -59,6 +59,10 @@ public abstract class ApiRequest<T> {
         return this.getClient().isCached();
     }
 
+    public boolean isTest() {
+        return this.getClient().isTest();
+    }
+
     public T execute() throws ApiException, ClientException {
         String textResponse = executeAsString();
         JsonReader jsonReader = new JsonReader(new StringReader(textResponse));

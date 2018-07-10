@@ -82,6 +82,11 @@ public class TransportClientCached implements TransportClient {
         return true;
     }
 
+    @Override
+    public boolean isTest() {
+        return false;
+    }
+
     /**
      * Basic HTTP headers that satisfy {@link com.vk.api.sdk.client.ApiRequest}.
      * @return A {@link Map} with HTTP headers.

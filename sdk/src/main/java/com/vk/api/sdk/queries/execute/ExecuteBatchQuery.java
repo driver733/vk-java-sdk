@@ -71,7 +71,7 @@ public class ExecuteBatchQuery extends AbstractQueryBuilder<ExecuteBatchQuery, J
 
         int requestIndex = 0;
         for (AbstractQueryBuilder request : value) {
-            if (!request.isCached()) {
+            if (!request.isCached() || request.isTest()) {
                 builder.append("API.").append(request.getMethod()).append("(");
                 Map<String, String> params = new HashMap<>(request.build());
 

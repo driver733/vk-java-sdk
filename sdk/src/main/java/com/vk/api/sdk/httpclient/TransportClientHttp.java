@@ -183,6 +183,11 @@ public class TransportClientHttp implements TransportClient {
     }
 
     @Override
+    public boolean isTest() {
+        return false;
+    }
+
+    @Override
     public ClientResponse post(String url, String fileName, File file) throws IOException {
         HttpPost request = new HttpPost(url);
         FileBody fileBody = new FileBody(file);

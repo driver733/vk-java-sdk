@@ -15,4 +15,7 @@ public interface TransportClient {
     ClientResponse post(String url) throws IOException;
 
     boolean isCached();
+
+    boolean isTest();
+
 }
